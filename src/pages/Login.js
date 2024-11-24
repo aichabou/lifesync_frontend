@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { loginUser } from '../api';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
-    const [message, setMessage] = useState('');
-    const [token, setToken] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate(); // Utilisé pour la redirection
 
-    const handleChange = (e) => {
+    const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
@@ -15,10 +16,15 @@ const Login = () => {
         e.preventDefault();
         try {
             const response = await loginUser(formData);
-            setToken(response.data.token);
-            setMessage('Connexion réussie');
-        } catch (error) {
-            setMessage(error.response?.data?.error || 'Erreur lors de la connexion');
+            const { token } = response.data;
+
+            // Sauvegarder le token dans le stockage local pour la session
+            localStorage.setItem('token', token);
+
+            // Rediriger vers /tasks après connexion réussie
+            navigate('/tasks');
+        } catch (err) {
+            setError('Erreur de connexion. Vérifiez vos identifiants.');
         }
     };
 
@@ -26,26 +32,29 @@ const Login = () => {
         <div>
             <h1>Connexion</h1>
             <form onSubmit={handleSubmit}>
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                />
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Mot de passe"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                />
+                <div>
+                    <label>Email :</label>
+                    <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Mot de passe :</label>
+                    <input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        required
+                    />
+                </div>
                 <button type="submit">Se connecter</button>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
             </form>
-            {message && <p>{message}</p>}
-            {token && <p>Token : {token}</p>}
         </div>
     );
 };
