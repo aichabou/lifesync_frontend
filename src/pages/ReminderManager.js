@@ -1,45 +1,96 @@
 import React, { useState, useEffect } from 'react';
-import { fetchReminders, createReminder, updateReminder, deleteReminder } from '../api';
+import { toast } from 'react-toastify';
+import {
+    fetchReminders,
+    createReminder,
+    updateReminder,
+    deleteReminder,
+    getTasks, // Pour récupérer les tâches
+} from '../api';
 
 const ReminderManager = () => {
     const [reminders, setReminders] = useState([]);
+    const [tasks, setTasks] = useState([]); // Pour stocker les tâches
     const [newReminder, setNewReminder] = useState({ content: '', datetime: '' });
     const [editingReminder, setEditingReminder] = useState(null);
 
-    // Fetch reminders on component load
+    // Récupération des rappels et des tâches au chargement
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userid = 1; // Exemple : Utilisateur avec ID 1
-                const response = await fetchReminders(userid);
-                setReminders(Array.isArray(response.data) ? response.data : []);
+                const userid = 1; // Exemple d'utilisateur ID
+                const reminderResponse = await fetchReminders(userid);
+                const taskResponse = await getTasks(userid);
+
+                setReminders(Array.isArray(reminderResponse.data) ? reminderResponse.data : []);
+                setTasks(Array.isArray(taskResponse.data) ? taskResponse.data : []);
             } catch (error) {
-                console.error('Erreur lors de la récupération des reminders:', error);
+                console.error('Erreur lors de la récupération des données :', error);
             }
         };
         fetchData();
     }, []);
 
-    // Handle form inputs for creating a reminder
+    // Notification pour les tâches proches de leur deadline
+    useEffect(() => {
+        const checkDeadlines = () => {
+            const now = new Date();
+            tasks.forEach((task) => {
+                const deadline = new Date(task.deadline);
+                const timeLeft = deadline - now;
+
+                // Notifie si la tâche est dans les 24 heures
+                if (timeLeft > 0 && timeLeft <= 24 * 60 * 60 * 1000) {
+                    toast.warning(`La tâche "${task.description}" approche de sa deadline !`);
+                }
+            });
+        };
+
+        const interval = setInterval(checkDeadlines, 60 * 1000); // Vérification chaque minute
+        return () => clearInterval(interval); // Nettoyage de l'intervalle
+    }, [tasks]);
+
+    // Notification pour les rappels proches de leur datetime
+    useEffect(() => {
+        const checkReminders = () => {
+            const now = new Date();
+            reminders.forEach((reminder) => {
+                const reminderTime = new Date(reminder.datetime);
+                const timeLeft = reminderTime - now;
+
+                // Notifie si le rappel est dans les 10 minutes
+                if (timeLeft > 0 && timeLeft <= 10 * 60 * 1000) {
+                    toast.info(`Rappel imminent : "${reminder.content}" prévu à ${reminderTime.toLocaleTimeString('fr-FR')}`);
+                }
+            });
+        };
+
+        const interval = setInterval(checkReminders, 60 * 1000); // Vérification chaque minute
+        return () => clearInterval(interval); // Nettoyage de l'intervalle
+    }, [reminders]);
+
+    // Gestion des champs du formulaire
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewReminder({ ...newReminder, [name]: value });
     };
 
-    // Add a new reminder
+    // Ajouter un rappel
     const handleAddReminder = async (e) => {
         e.preventDefault();
         try {
-            const userid = 1; // Exemple : Utilisateur avec ID 1
+            const userid = 1; // Exemple d'utilisateur ID
             const response = await createReminder({ ...newReminder, userid });
             setReminders([...reminders, response.data]);
             setNewReminder({ content: '', datetime: '' });
+            toast.success('Rappel ajouté avec succès !');
         } catch (error) {
-            console.error('Erreur lors de l’ajout du reminder:', error);
+            console.error('Erreur lors de l’ajout du rappel :', error);
+            toast.error('Impossible d’ajouter le rappel.');
         }
     };
 
-    // Update a reminder
+    // Mettre à jour un rappel
     const handleUpdateReminder = async (reminderId, updatedData) => {
         try {
             const response = await updateReminder(reminderId, updatedData);
@@ -49,18 +100,22 @@ const ReminderManager = () => {
                 )
             );
             setEditingReminder(null);
+            toast.success('Rappel mis à jour avec succès !');
         } catch (error) {
-            console.error('Erreur lors de la mise à jour du reminder:', error);
+            console.error('Erreur lors de la mise à jour du rappel :', error);
+            toast.error('Impossible de mettre à jour le rappel.');
         }
     };
 
-    // Delete a reminder
+    // Supprimer un rappel
     const handleDeleteReminder = async (reminderId) => {
         try {
             await deleteReminder(reminderId);
             setReminders(reminders.filter((reminder) => reminder.reminderid !== reminderId));
+            toast.info('Rappel supprimé.');
         } catch (error) {
-            console.error('Erreur lors de la suppression du reminder:', error);
+            console.error('Erreur lors de la suppression du rappel :', error);
+            toast.error('Impossible de supprimer le rappel.');
         }
     };
 
@@ -95,7 +150,6 @@ const ReminderManager = () => {
                     reminders.map((reminder) => (
                         <div key={reminder.reminderid}>
                             {editingReminder === reminder.reminderid ? (
-                                // Formulaire de modification
                                 <form
                                     onSubmit={(e) => {
                                         e.preventDefault();
