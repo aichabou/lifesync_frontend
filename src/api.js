@@ -6,3 +6,8 @@ const API = axios.create({
 
 export const registerUser = (data) => API.post('/register', data);
 export const loginUser = (data) => API.post('/login', data);
+// Rappels
+export const fetchReminders = (userid) => API.get(`/reminders/${userid}`);
+export const createReminder = (data) => API.post('/reminders', data);
+export const updateReminder = (reminderid, data) => API.put(`/reminders/${reminderid}`, data);
+export const deleteReminder = (reminderid) => API.delete(`/reminders/${reminderid}`);
