@@ -6,7 +6,7 @@ import {
     updateReminder,
     deleteReminder,
     getTasks, // Pour récupérer les tâches
-} from '../api';
+} from '../../api/api';
 
 const ReminderManager = () => {
     const [reminders, setReminders] = useState([]);

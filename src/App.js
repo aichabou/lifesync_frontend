@@ -2,10 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Register from './pages/Register';
-import Login from './pages/Login';
-import TaskManager from './pages/TaskManager';
-import ReminderManager from './pages/ReminderManager';
+import Register from '../src/pages/Register/Register';
+import Login from '../src/pages/Login/Login';
+import TaskManager from '../src/pages/TaskManager/TaskManager';
+import ReminderManager from '../src/pages/ReminderManager/ReminderManager';
 
 const ProtectedRoute = ({ children }) => {
     const isAuthenticated = !!localStorage.getItem('token'); // Exemple avec un token
