@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const TaskManager = () => {
+        // Fonction pour gérer la déconnexion
+        const handleLogout = () => {
+            localStorage.removeItem('token'); // Supprime le token
+            window.location.href = '/login'; // Redirige vers la page de connexion
+        };
     const [tasks, setTasks] = useState([]);
     const [form, setForm] = useState({
         description: '',
@@ -77,6 +82,7 @@ const TaskManager = () => {
 
     return (
         <div>
+            <button onClick={handleLogout} style={{ marginTop: '20px' }}>Déconnexion</button>
             <h1>Gestion des tâches</h1>
             <form onSubmit={handleSubmit}>
                 <div>
