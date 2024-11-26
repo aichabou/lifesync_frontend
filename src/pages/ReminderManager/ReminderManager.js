@@ -9,6 +9,10 @@ import {
 } from '../../api/api';
 
 const ReminderManager = () => {
+    const handleLogout = () => {
+        localStorage.removeItem('token'); // Supprime le token
+        window.location.href = '/login'; // Redirige vers la page de connexion
+    };
     const [reminders, setReminders] = useState([]);
     const [tasks, setTasks] = useState([]); // Pour stocker les tâches
     const [newReminder, setNewReminder] = useState({ content: '', datetime: '' });
@@ -121,6 +125,7 @@ const ReminderManager = () => {
 
     return (
         <div>
+            <button onClick={handleLogout} style={{ marginTop: '20px' }}>Déconnexion</button>
             <h1>Gestion des Rappels</h1>
 
             {/* Formulaire pour ajouter un nouveau rappel */}
