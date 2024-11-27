@@ -20,6 +20,9 @@ const App = () => {
         <>
             <ToastContainer />
             <Router>
+                <div>
+                    <CookieConsent />
+                </div>
                 <Routes>
                     <Route path="/" element={<Navigate to="/login" />} />
                     <Route path="/register" element={<Register />} />
@@ -45,7 +48,7 @@ const App = () => {
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 </Routes>
             </Router>
-            <CookieConsent />
+            
         </>
     );
 };

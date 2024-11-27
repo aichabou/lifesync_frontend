@@ -1,21 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const CookieConsent = () => {
-    const [isVisible, setIsVisible] = useState(!localStorage.getItem('cookiesAccepted'));
+const CookiesConsent = () => {
+    const [isConsentGiven, setIsConsentGiven] = useState(false);
+
+    useEffect(() => {
+        // Vérifie si l'utilisateur a déjà donné son consentement
+        const consent = localStorage.getItem('cookiesConsent');
+        if (consent === 'true') {
+            setIsConsentGiven(true);
+        }
+    }, []);
 
     const handleAccept = () => {
-        localStorage.setItem('cookiesAccepted', true);
-        setIsVisible(false);
+        localStorage.setItem('cookiesConsent', 'true');
+        setIsConsentGiven(true);
     };
 
-    if (!isVisible) return null;
+    const handleReject = () => {
+        localStorage.setItem('cookiesConsent', 'false');
+        setIsConsentGiven(true);
+    };
+
+    if (isConsentGiven) {
+        return null; // Si le consentement est donné, ne rien afficher
+    }
 
     return (
-        <div style={{ position: 'fixed', bottom: 0, backgroundColor: 'lightgrey', padding: '10px', width: '100%' }}>
-            <p>Nous utilisons des cookies pour améliorer votre expérience. En continuant, vous acceptez notre utilisation des cookies.</p>
-            <button onClick={handleAccept}>Accepter</button>
+        <div>
+            <p>
+                Ce site utilise des cookies pour améliorer votre expérience. En continuant, vous acceptez notre utilisation des cookies.
+            </p>
+            <div>
+                <button
+                    onClick={handleAccept}
+                >
+                    Accepter
+                </button>
+                <button
+                    onClick={handleReject}
+                >
+                    Refuser
+                </button>
+            </div>
         </div>
     );
 };
 
-export default CookieConsent;
+export default CookiesConsent;
