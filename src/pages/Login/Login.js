@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import FormInput from '../../components/FormInput';
+import Button from '../../components/Buttons';
 import { loginUser } from '../../api/api';
-import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
-    const [error, setError] = useState('');
-    const navigate = useNavigate(); // Utilisé pour la redirection
+    const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -15,46 +16,40 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await loginUser(formData);
-            const { token } = response.data;
-
-            // Sauvegarder le token dans le stockage local pour la session
-            localStorage.setItem('token', token);
-
-            // Rediriger vers /tasks après connexion réussie
-            navigate('/tasks');
+            await loginUser(formData);
+            alert('Connexion réussie !');
+            navigate('/tasks'); // Redirection vers les tâches après connexion
         } catch (err) {
-            setError('Erreur de connexion. Vérifiez vos identifiants.');
+            console.error('Erreur de connexion :', err.message);
+            alert('Erreur lors de la connexion.');
         }
     };
 
     return (
-        <div>
-            <h1>Connexion</h1>
+        <div style={{ width: '100%', maxWidth: '400px', margin: 'auto', marginTop: '2rem' }}>
+            <h2>Login</h2>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Email :</label>
-                    <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Mot de passe :</label>
-                    <input
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </div>
-                <button type="submit">Se connecter</button>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                <FormInput
+                    label="Email address"
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="Entrez votre email"
+                />
+                <FormInput
+                    label="Password"
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    placeholder="Entrez votre mot de passe"
+                />
+                <Button type="submit" text="Login" />
             </form>
+            <p>
+                Don't have an account? <Link to="/register">Register here</Link>.
+            </p>
         </div>
     );
 };
