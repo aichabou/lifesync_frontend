@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FormInput = ({ label, type, name, value, onChange, placeholder }) => (
+const FormInput = ({ label, type, name, value, onChange, placeholder, error }) => (
     <div style={{ marginBottom: '1rem' }}>
         <label>{label}</label>
         <input
@@ -17,7 +17,9 @@ const FormInput = ({ label, type, name, value, onChange, placeholder }) => (
                 border: '1px solid #ccc',
             }}
         />
+        {error && <p style={{ color: 'red', fontSize: '.8rem' }}>{error}</p>}
     </div>
 );
+
 
 export default FormInput;

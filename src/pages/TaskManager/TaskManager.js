@@ -18,12 +18,12 @@ const TaskManager = () => {
     const [sortBy, setSortBy] = useState('deadline');
     const [order, setOrder] = useState('ASC');
 
-    const userId = 1; // Exemple d'utilisateur connecté
+    const userid = 1; // Exemple d'utilisateur connecté
 
     // Charger les tâches
     const fetchTasks = async () => {
         try {
-            const res = await axios.get(`http://localhost:3000/api/tasks/${userId}?sortBy=${sortBy}&order=${order}`);
+            const res = await axios.get(`http://localhost:3000/api/tasks/${userid}?sortBy=${sortBy}&order=${order}`);
             setTasks(res.data);
         } catch (err) {
             console.error('Erreur lors du chargement des tâches :', err.message);
@@ -50,7 +50,7 @@ const TaskManager = () => {
         } else {
             // Ajouter une tâche
             try {
-                await axios.post('http://localhost:3000/api/tasks', { userid: userId, ...form });
+                await axios.post('http://localhost:3000/api/tasks', { userid: userid, ...form });
                 setForm({ description: '', deadline: '', priority: 'low', status: 'pending' });
                 fetchTasks();
             } catch (err) {
