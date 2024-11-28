@@ -13,7 +13,7 @@ export const updateTaskHandler = (taskid, data) => API.put(`/tasks/${taskid}`, d
 export const deleteTaskHandler = (taskid) => API.delete(`/tasks/${taskid}`);
 
 // Rappels
-export const fetchReminders = (userid) => API.get(`/reminders/${userid}`);
-export const createReminder = (data) => API.post('/reminders', data);
-export const updateReminder = (reminderid, data) => API.put(`/reminders/${reminderid}`, data);
-export const deleteReminder = (reminderid) => API.delete(`/reminders/${reminderid}`);
+export const getRemindersHandler = (userid) => API.get(`/reminders/${userid}`);
+export const createReminderHandler = (data) => API.post(`/reminders`, data);
+export const updateReminderHandler = (reminderid, data) => API.put(`/reminders/${reminderid}`, data);
+export const deleteReminderHandler = (reminderid) => API.delete(`/reminders/${reminderid}`);

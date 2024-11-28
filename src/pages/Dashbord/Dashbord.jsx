@@ -6,7 +6,7 @@ import '../../config/chartConfig';
 import { getUserIdFromToken } from '../../utils/auth';
 
 // API pour récupérer les données
-import { getTasksHandler, fetchReminders } from "../../api/api";
+import { getTasksHandler, getRemindersHandler } from "../../api/api";
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -27,7 +27,7 @@ const Dashboard = () => {
         try {
             const tasksResponse = await getTasksHandler(userid);
             console.log("Tâches récupérées :", tasksResponse.data);
-            const remindersResponse = await fetchReminders(userid);
+            const remindersResponse = await getRemindersHandler(userid);
 
             setTasks(tasksResponse.data.slice(0, 5)); // Affiche un maximum de 5 tâches
             setReminders(remindersResponse.data.slice(0, 5)); // Affiche un maximum de 5 rappels
@@ -76,7 +76,7 @@ const Dashboard = () => {
               productif !
             </p>
             <button onClick={() => navigate("/add-task")}>Ajouter une tâche</button>
-            <button onClick={() => navigate("/reminders")} style={{ marginLeft: "10px" }}>
+            <button onClick={() => navigate("/add-reminder")} style={{ marginLeft: "10px" }}>
               Ajouter un rappel
             </button>
           </div>
