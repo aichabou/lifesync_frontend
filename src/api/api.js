@@ -6,7 +6,11 @@ const API = axios.create({
 
 export const registerUser = (data) => API.post('/register', data);
 export const loginUser = (data) => API.post('/login', data);
-export const getTasks = (userid) => API.get(`/tasks/${userid}`);
+// Taches
+export const getTasksHandler = (userid) => API.get(`/tasks/${userid}`);
+export const createTaskHandler = (data) => API.post(`/tasks`,data);
+export const updateTaskHandler = (taskid, data) => API.put(`/tasks/${taskid}`, data);
+export const deleteTaskHandler = (taskid) => API.delete(`/tasks/${taskid}`);
 
 // Rappels
 export const fetchReminders = (userid) => API.get(`/reminders/${userid}`);

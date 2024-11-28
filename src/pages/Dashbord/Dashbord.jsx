@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 // Import du graphe circulaire
 import { Doughnut } from "react-chartjs-2";
 import '../../config/chartConfig';
+import { getUserIdFromToken } from '../../utils/auth';
 
 // API pour récupérer les données
-import { getTasks, fetchReminders } from "../../api/api";
+import { getTasksHandler, fetchReminders } from "../../api/api";
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
@@ -16,21 +17,28 @@ const Dashboard = () => {
   // Charger les tâches et rappels au démarrage
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const userid = localStorage.getItem("userid"); // Récupérer l'ID utilisateur
-        const tasksResponse = await getTasks(userid);
-        const remindersResponse = await fetchReminders(userid);
+        console.log("Token dans le localStorage :", localStorage.getItem('token')); // Vérifiez si le token est bien stocké
+        const userid = getUserIdFromToken(); // Récupère l'ID utilisateur
+        if (!userid) {
+            console.error("Utilisateur non identifié.");
+            return; // Arrête si aucun utilisateur identifié
+        }
 
-        setTasks(tasksResponse.data.slice(0, 5)); // Affiche un maximum de 5 tâches
-        setReminders(remindersResponse.data.slice(0, 5)); // Affiche un maximum de 5 rappels
+        try {
+            const tasksResponse = await getTasksHandler(userid);
+            console.log("Tâches récupérées :", tasksResponse.data);
+            const remindersResponse = await fetchReminders(userid);
 
-        // Calcul de progression
-        const totalTasks = tasksResponse.data.length;
-        const completedTasks = tasksResponse.data.filter(task => task.status === "completed").length;
-        setTaskProgress(totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0);
-      } catch (error) {
-        console.error("Erreur lors du chargement des données :", error);
-      }
+            setTasks(tasksResponse.data.slice(0, 5)); // Affiche un maximum de 5 tâches
+            setReminders(remindersResponse.data.slice(0, 5)); // Affiche un maximum de 5 rappels
+
+            // Calcul de progression
+            const totalTasks = tasksResponse.data.length;
+            const completedTasks = tasksResponse.data.filter(task => task.status === "completed").length;
+            setTaskProgress(totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0);
+        } catch (error) {
+            console.error("Erreur lors du chargement des données :", error.message);
+        }
     };
 
     fetchData();
@@ -67,7 +75,7 @@ const Dashboard = () => {
               Vous pouvez commencer votre journée en ajoutant une nouvelle tâche ou un rappel. Restez organisé et
               productif !
             </p>
-            <button onClick={() => navigate("/tasks")}>Ajouter une tâche</button>
+            <button onClick={() => navigate("/add-task")}>Ajouter une tâche</button>
             <button onClick={() => navigate("/reminders")} style={{ marginLeft: "10px" }}>
               Ajouter un rappel
             </button>

@@ -4,7 +4,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Register from '../src/pages/Register/Register';
 import Login from '../src/pages/Login/Login';
-import TaskManager from '../src/pages/TaskManager/TaskManager';
+import AddTask from '../src/pages/TaskManager/AddTask';
+import AllTasks from '../src/pages/TaskManager/AllTasks';
 import ReminderManager from '../src/pages/ReminderManager/ReminderManager';
 import CookieConsent from '../src/components/CookieConsent';
 import PrivacyPolicy from './pages/PrivacyPolicy';
@@ -14,9 +15,14 @@ import Header from './components/Header/Header';
 import Dashboard from './pages/Dashbord/Dashbord';
 
 const ProtectedRoute = ({ children }) => {
-    const isAuthenticated = !!localStorage.getItem('token'); // Exemple avec un token
-    return isAuthenticated ? children : <Navigate to="/login" />;
+    const isAuthenticated = !!localStorage.getItem('token'); // Vérifie la présence du token
+    if (!isAuthenticated) {
+        console.error("L'utilisateur n'est pas authentifié.");
+        return <Navigate to="/login" />; // Redirige si non connecté
+    }
+    return children; // Affiche le contenu protégé si connecté
 };
+
 
 const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -50,10 +56,18 @@ const App = () => {
                     element={isLoggedIn ? <Dashboard /> : <Navigate to="/login" />}
                 />
                     <Route
+                        path="/add-task"
+                        element={
+                            <ProtectedRoute>
+                                <AddTask />
+                                </ProtectedRoute>
+                        }
+                    />
+                    <Route
                         path="/tasks"
                         element={
                             <ProtectedRoute>
-                                <TaskManager />
+                                <AllTasks />
                             </ProtectedRoute>
                         }
                     />

@@ -5,7 +5,7 @@ import {
     createReminder,
     updateReminder,
     deleteReminder,
-    getTasks, // Pour récupérer les tâches
+    getTasksHandler, // Pour récupérer les tâches
 } from '../../api/api';
 
 const ReminderManager = () => {
@@ -24,7 +24,7 @@ const ReminderManager = () => {
             try {
                 const userid = 1; // Exemple d'utilisateur ID
                 const reminderResponse = await fetchReminders(userid);
-                const taskResponse = await getTasks(userid);
+                const taskResponse = await getTasksHandler(userid);
 
                 setReminders(Array.isArray(reminderResponse.data) ? reminderResponse.data : []);
                 setTasks(Array.isArray(taskResponse.data) ? taskResponse.data : []);
