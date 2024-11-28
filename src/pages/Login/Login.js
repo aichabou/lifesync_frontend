@@ -27,16 +27,23 @@ const Login = ({ setIsLoggedIn }) => {
         try {
             // Appeler l'API pour se connecter
             const response = await loginUser({ email, password });
+            const { token, user } = response.data;
             console.log('Réponse du serveur:', response.data);
 
+            if (!token) {
+                throw new Error("Le serveur n'a pas renvoyé de token.");
+            }
             // Si la connexion est réussie
-            localStorage.setItem('isLoggedIn', 'true');
-            localStorage.setItem('userId', response.data.user.userid); // Enregistrer l'ID utilisateur
+            localStorage.setItem('token', token);
+            localStorage.setItem('userid', user.userid);
+            console.log(localStorage.getItem('userid'));
+            localStorage.setItem("isLoggedIn", "true");
             setIsLoggedIn(true);
-            navigate('/dashboard'); // Rediriger vers le dashboard après connexion
+            navigate('/dashboard');
+            console.log("ID utilisateur enregistré :", localStorage.getItem("userid"));
         } catch (err) {
-            console.error('Erreur lors de la connexion:', err.response?.data?.error || err.message);
-            setError(err.response?.data?.error || 'Une erreur est survenue lors de la connexion.');
+            console.error('Erreur lors de la connexion:', err.message);
+            alert("Échec de la connexion. Vérifiez vos identifiants.");
         }
     };
 
