@@ -14,6 +14,7 @@ import ProfilePage from './pages/ProfilePage';
 import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
 import Dashboard from './pages/Dashbord/Dashbord';
+import { Notification } from './pages/NotificationManager/Notification'; // Assurez-vous du bon chemin
 
 const ProtectedRoute = ({ children }) => {
     const isAuthenticated = !!localStorage.getItem('token'); // Vérifie la présence du token
@@ -39,16 +40,21 @@ const App = () => {
         localStorage.removeItem('isLoggedIn');
         setIsLoggedIn(false);
     };
+
+    const userid = localStorage.getItem('userid'); // Récupère l'utilisateur connecté
+
+    // Appel du hook de notification
+    Notification(userid);
+
     return (
         <>
-        
+
             <ToastContainer />
             <Router>
             {isLoggedIn && <Header onLogout={handleLogout} />}
                 <div>
                     <CookieConsent />
                 </div>
-                {/* <div className="bg-primary text-white p-4">This uses the primary color.</div> */}
                 <Routes>
                     <Route path="/" element={<Navigate to="/login" />} />
                     <Route path="/register" element={<Register setIsLoggedIn={setIsLoggedIn} />} />
@@ -81,7 +87,7 @@ const App = () => {
                 </Routes>
                 <Footer />
             </Router>
-            
+
         </>
     );
 };
