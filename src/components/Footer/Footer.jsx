@@ -2,26 +2,28 @@ import React from 'react';
 
 const Footer = () => {
     return (
-        <footer style={{ backgroundColor: '#f9f9f9', padding: '20px', textAlign: 'center' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+        <footer className="bg-white py-6 text-center border-t border-gray-200">
+            <div className="container mx-auto flex flex-wrap justify-between items-center">
                 {/* Logo ou Nom du projet */}
-                <div>
-                    <a href="/" style={{ textDecoration: 'none', color: 'black', fontWeight: 'bold', fontSize: '20px' }}>
-                        <img src="/logo.png" alt="LifeSync Logo" style={{ height: '40px' }} />
+                <div className="mb-4 md:mb-0">
+                    <a href="/" className="flex items-center text-primary font-bold text-xl">
+                        <img src="/img/logo_lifesync.png" alt="LifeSync Logo" className="h-14 md:h-35" />
                     </a>
                 </div>
 
                 {/* Navigation */}
-                <div style={{ display: 'flex', gap: '15px' }}>
-                    <a href="/privacyPolicy" style={{ textDecoration: 'none', color: 'black' }}>Politique de confidentialité</a>
-                    <a href="mailto:support@lifesync.com">Contactez-nous</a>
+                <div className="flex flex-wrap gap-4 mb-4 md:mb-0">
+                    <a href="/privacy-policy" className="text-gray-700 hover:text-primary transition">
+                        Politique de confidentialité
+                    </a>
+                    <a href="mailto:support@lifesync.com" className="text-gray-700 hover:text-primary transition">
+                        Contactez-nous
+                    </a>
                 </div>
 
                 {/* Mentions légales */}
-                <div>
-                    <p style={{ margin: '0', fontSize: '14px' }}>
-                        © {new Date().getFullYear()} LifeSync. Tous droits réservés.
-                    </p>
+                <div className="text-sm text-gray-500">
+                    © {new Date().getFullYear()} <span className="text-primary">LifeSync</span>. Tous droits réservés.
                 </div>
             </div>
         </footer>

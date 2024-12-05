@@ -48,6 +48,7 @@ const App = () => {
                 <div>
                     <CookieConsent />
                 </div>
+                {/* <div className="bg-primary text-white p-4">This uses the primary color.</div> */}
                 <Routes>
                     <Route path="/" element={<Navigate to="/login" />} />
                     <Route path="/register" element={<Register setIsLoggedIn={setIsLoggedIn} />} />

@@ -13,7 +13,6 @@ const Dashboard = () => {
   const [taskProgress, setTaskProgress] = useState(0);
   const navigate = useNavigate();
 
-  // Fetch tasks and reminders
   useEffect(() => {
     const fetchData = async () => {
       const userid = getUserIdFromToken();
@@ -44,15 +43,13 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  // Dynamic text for the center of the doughnut chart
   const dynamicText =
     taskProgress === 100
-      ? "Félicitations, toutes les tâches sont terminées ! 🎉"
+      ? "🎉 Félicitations, toutes les tâches sont terminées !"
       : taskProgress === 0
-      ? "Commencez dès maintenant vos tâches ! 💪"
-      : `Bon travail ! ${taskProgress}% accompli. 🚀`;
+      ? "💪 Commencez dès maintenant vos tâches !"
+      : `🚀 Bon travail ! ${taskProgress}% accompli.`;
 
-  // Memoized chart data and options
   const chartData = useMemo(
     () => ({
       labels: ["Complétées", "Restantes"],
@@ -79,92 +76,150 @@ const Dashboard = () => {
   );
 
   return (
-    <div>
-      <main style={{ padding: "20px" }}>
-        {/* Task Progress Section */}
-        <section
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "30px",
-          }}
-        >
-        <div style={{ position: "relative", width: "40%", height: "300px" }}>
-          <h2>Progression des tâches</h2>
-          <Doughnut data={chartData} options={chartOptions} />
-          <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, 30%)", // Assure un centrage parfait horizontalement et verticalement
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "30%", // Optionnel, pour limiter la largeur du texte
-              textAlign: "center",
-              fontSize: "15px",
-              fontWeight: "bold",
-              color: "#4CAF50",
-              lineHeight: "1.4", // Pour bien espacer les lignes si le texte est long
-            }}
-          >
-            {dynamicText}
-          </div>
-        </div>
+    <div className="p-6 bg-background min-h-screen">
+      <main className="space-y-8">
+        {/* Progression des tâches et bienvenue */} 
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          {/* Progression des tâches */}
+          <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 text-center">
+            <h2 className="text-xl font-bold text-primary mb-4">
+              Progression des tâches
+            </h2>
+            <div className="flex justify-center items-center relative">
+  <div className="relative w-1/2 h-64">
+    <Doughnut data={chartData} options={chartOptions} />
+    <div
+      className="absolute inset-0 flex items-center justify-center text-center text-primary font-semibold text-sm"
+      style={{
+        maxWidth: "60%", // Limite la largeur pour éviter le débordement
+        whiteSpace: "normal", // Permet le retour à la ligne
+        wordWrap: "break-word", // Gère les mots longs
+        lineHeight: "1.5", // Ajoute un espacement vertical
+        transform: "translate(30%, -5%)", // Ajuste verticalement si nécessaire
+      }}
+    >
+      {dynamicText}
+    </div>
+  </div>
+</div>
 
-          <div style={{ width: "50%" }}>
-            <h2>Have a good day</h2>
-            <p>
-              Vous pouvez commencer votre journée en ajoutant une nouvelle tâche
-              ou un rappel. Restez organisé et productif !
+          </div>
+
+          {/* Section de bienvenue */}
+          <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 text-center">
+            <h2 className="text-lg font-bold text-primary mb-4">Bonjour ! 🌟</h2>
+            <p className="text-gray-600 mb-4">
+              Profitez de cette journée pour atteindre vos objectifs et avancer
+              dans vos projets. Vous êtes capable de grandes choses !
             </p>
-            <button onClick={() => navigate("/add-task")}>Ajouter une tâche</button>
-            <button
-              onClick={() => navigate("/add-reminder")}
-              style={{ marginLeft: "10px" }}
-            >
-              Ajouter un rappel
-            </button>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => navigate("/add-task")}
+                className="px-4 py-2 bg-primary text-white rounded hover:bg-green-700 transition"
+              >
+                Ajouter une tâche
+              </button>
+              <button
+                onClick={() => navigate("/add-reminder")}
+                className="px-4 py-2 bg-secondary text-white rounded hover:bg-yellow-500 transition"
+              >
+                Ajouter un rappel
+              </button>
+            </div>
           </div>
         </section>
 
-        {/* Task and Reminder Lists */}
-        <section style={{ display: "flex", justifyContent: "space-between" }}>
-          <div style={{ width: "45%" }}>
-            <h3>Tâches à venir</h3>
-            <ul>
+        {/* Listes des tâches et rappels */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Carte des tâches */}
+          <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+            <h3 className="text-lg font-bold text-primary mb-4 text-center">
+              Tâches à venir
+            </h3>
+            <div className="space-y-4">
               {tasks.length > 0 ? (
                 tasks.map((task) => (
-                  <li key={task.taskid} style={{ marginBottom: "10px" }}>
-                    {task.description} -{" "}
-                    {new Date(task.deadline).toLocaleDateString()}
-                  </li>
+                  <div
+                    key={task.taskid}
+                    className={`p-4 rounded border ${
+                      task.status === "done"
+                        ? "border-primary bg-primary/10"
+                        : "border-accent bg-accent/10"
+                    } shadow-sm`}
+                  >
+                    <h4 className="font-bold text-gray-800">
+                      {task.description}
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      Échéance : {new Date(task.deadline).toLocaleDateString()}
+                    </p>
+                    <div className="flex justify-between items-center mt-2">
+                      <span
+                        className={`px-3 py-1 text-xs rounded-full ${
+                          task.status === "done"
+                            ? "bg-primary text-white"
+                            : "bg-accent text-white"
+                        }`}
+                      >
+                        {task.status === "done" ? "Fini" : "En attente"}
+                      </span>
+                      <span
+                        className={`px-3 py-1 text-xs rounded-full ${
+                          task.priority === "High"
+                            ? "bg-red-500 text-white"
+                            : task.priority === "Medium"
+                            ? "bg-yellow-500 text-white"
+                            : "bg-green-500 text-white"
+                        }`}
+                      >
+                        {task.priority || "Priorité inconnue"}
+                      </span>
+                    </div>
+                  </div>
                 ))
               ) : (
-                <p>Aucune tâche à afficher.</p>
+                <p className="text-gray-500 text-center">Aucune tâche à afficher.</p>
               )}
-            </ul>
-            <button onClick={() => navigate("/tasks")}>
+            </div>
+
+            <button
+              onClick={() => navigate("/tasks")}
+              className="mt-4 w-full px-4 py-2 bg-primary text-white rounded hover:bg-green-700 transition"
+            >
               Accéder à toutes les tâches
             </button>
           </div>
-          <div style={{ width: "45%" }}>
-            <h3>Rappels à venir</h3>
-            <ul>
+
+          {/* Carte des rappels */}
+          <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+            <h3 className="text-lg font-bold text-primary mb-4 text-center">
+              Rappels à venir
+            </h3>
+            <div className="space-y-4">
               {reminders.length > 0 ? (
                 reminders.map((reminder) => (
-                  <li key={reminder.reminderid} style={{ marginBottom: "10px" }}>
-                    {reminder.content} -{" "}
-                    {new Date(reminder.datetime).toLocaleDateString()}
-                  </li>
+                  <div
+                    key={reminder.reminderid}
+                    className="p-4 rounded border border-blue-500 bg-blue-50 shadow-sm"
+                  >
+                    <h4 className="font-bold text-gray-800">
+                      {reminder.content}
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      Date : {new Date(reminder.datetime).toLocaleDateString()}
+                    </p>
+                  </div>
                 ))
               ) : (
-                <p>Aucun rappel à afficher.</p>
+                <p className="text-gray-500 text-center">
+                  Aucun rappel à afficher.
+                </p>
               )}
-            </ul>
-            <button onClick={() => navigate("/reminders")}>
+            </div>
+            <button
+              onClick={() => navigate("/reminders")}
+              className="mt-4 w-full px-4 py-2 bg-secondary text-white rounded hover:bg-yellow-500 transition"
+            >
               Accéder à tous les rappels
             </button>
           </div>
