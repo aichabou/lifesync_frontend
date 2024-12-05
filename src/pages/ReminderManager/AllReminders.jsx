@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { getRemindersHandler, updateReminderHandler, deleteReminderHandler } from '../../api/api';
+import React, { useEffect, useState } from "react";
+import { getRemindersHandler, updateReminderHandler, deleteReminderHandler } from "../../api/api";
 
 const AllReminders = () => {
     const [reminders, setReminders] = useState([]);
     const [editingReminder, setEditingReminder] = useState(null);
     const [form, setForm] = useState({
-        content: '',
-        datetime: '',
+        content: "",
+        datetime: "",
     });
 
-    const userid = localStorage.getItem('userid');
+    const userid = localStorage.getItem("userid");
 
     useEffect(() => {
         const fetchReminders = async () => {
@@ -17,7 +17,7 @@ const AllReminders = () => {
                 const response = await getRemindersHandler(userid);
                 setReminders(response.data);
             } catch (error) {
-                console.error('Erreur lors du chargement des rappels :', error.message);
+                console.error("Erreur lors du chargement des rappels :", error.message);
             }
         };
 
@@ -40,66 +40,54 @@ const AllReminders = () => {
     const handleSave = async () => {
         try {
             await updateReminderHandler(editingReminder, form);
-            alert('Rappel modifié avec succès !');
+            alert("Rappel modifié avec succès !");
             setEditingReminder(null);
-            window.location.reload();
+            setReminders(reminders.map((reminder) =>
+                reminder.reminderid === editingReminder ? { ...reminder, ...form } : reminder
+            ));
         } catch (error) {
-            console.error('Erreur lors de la modification du rappel :', error.message);
+            console.error("Erreur lors de la modification du rappel :", error.message);
         }
     };
 
     const handleDelete = async (reminderid) => {
         try {
             await deleteReminderHandler(reminderid);
-            alert('Rappel supprimé avec succès !');
+            alert("Rappel supprimé avec succès !");
             setReminders(reminders.filter((reminder) => reminder.reminderid !== reminderid));
         } catch (error) {
-            console.error('Erreur lors de la suppression du rappel :', error.message);
+            console.error("Erreur lors de la suppression du rappel :", error.message);
         }
     };
 
     return (
-        <div style={{ padding: '20px', maxWidth: '800px', margin: 'auto' }}>
-            <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Tous les rappels</h1>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
+        <div className="max-w-5xl mx-auto p-6 bg-white rounded-lg shadow-md">
+            <h1 className="text-2xl font-semibold text-secondary text-center mb-6">
+                Tous les rappels
+            </h1>
+            <ul className="space-y-4">
                 {reminders.length > 0 ? (
                     reminders.map((reminder) => (
                         <li
                             key={reminder.reminderid}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                padding: '10px 0',
-                                borderBottom: '1px solid #ccc',
-                            }}
+                            className="flex flex-col md:flex-row justify-between items-center p-4 border rounded-lg shadow-sm bg-gray-50"
                         >
-                            <div>
-                                <strong>{reminder.content}</strong> - {new Date(reminder.datetime).toLocaleString()}
+                            <div className="mb-4 md:mb-0">
+                                <p className="font-medium text-lg">{reminder.content}</p>
+                                <p className="text-sm text-gray-500">
+                                    {new Date(reminder.datetime).toLocaleString()}
+                                </p>
                             </div>
-                            <div>
+                            <div className="flex space-x-3">
                                 <button
                                     onClick={() => handleEdit(reminder)}
-                                    style={{
-                                        marginRight: '10px',
-                                        padding: '5px 10px',
-                                        backgroundColor: '#ffc107',
-                                        color: '#fff',
-                                        border: 'none',
-                                        cursor: 'pointer',
-                                    }}
+                                    className="px-4 py-2 bg-yellow text-white rounded hover:bg-yellow-500 transition"
                                 >
                                     Modifier
                                 </button>
                                 <button
                                     onClick={() => handleDelete(reminder.reminderid)}
-                                    style={{
-                                        padding: '5px 10px',
-                                        backgroundColor: '#dc3545',
-                                        color: '#fff',
-                                        border: 'none',
-                                        cursor: 'pointer',
-                                    }}
+                                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
                                 >
                                     Supprimer
                                 </button>
@@ -107,71 +95,59 @@ const AllReminders = () => {
                         </li>
                     ))
                 ) : (
-                    <p style={{ textAlign: 'center' }}>Aucun rappel disponible.</p>
+                    <p className="text-center text-gray-500">Aucun rappel disponible.</p>
                 )}
             </ul>
+
+            {/* Formulaire d'édition */}
             {editingReminder && (
-                <div
-                    style={{
-                        marginTop: '20px',
-                        padding: '20px',
-                        border: '1px solid #ccc',
-                        borderRadius: '5px',
-                        backgroundColor: '#f9f9f9',
-                    }}
-                >
-                    <h2 style={{ textAlign: 'center' }}>Modifier un rappel</h2>
-                    <form>
-                        <div style={{ marginBottom: '10px' }}>
-                            <label>Contenu</label>
+                <div className="mt-8 p-6 border rounded-lg shadow-md bg-white">
+                    <h2 className="text-xl font-semibold mb-4 text-secondary">
+                        Modifier un rappel
+                    </h2>
+                    <form className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Contenu
+                            </label>
                             <input
                                 type="text"
                                 name="content"
                                 value={form.content}
                                 onChange={handleInputChange}
+                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                                 required
-                                style={{
-                                    display: 'block',
-                                    margin: '10px 0',
-                                    padding: '8px',
-                                    width: '100%',
-                                    border: '1px solid #ccc',
-                                    borderRadius: '5px',
-                                }}
                             />
                         </div>
-                        <div style={{ marginBottom: '10px' }}>
-                            <label>Date et heure</label>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700">
+                                Date et heure
+                            </label>
                             <input
                                 type="datetime-local"
                                 name="datetime"
                                 value={form.datetime}
                                 onChange={handleInputChange}
+                                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                                 required
-                                style={{
-                                    display: 'block',
-                                    margin: '10px 0',
-                                    padding: '8px',
-                                    width: '100%',
-                                    border: '1px solid #ccc',
-                                    borderRadius: '5px',
-                                }}
                             />
                         </div>
-                        <button
-                            type="button"
-                            onClick={handleSave}
-                            style={{
-                                padding: '10px 15px',
-                                backgroundColor: '#28a745',
-                                color: '#fff',
-                                border: 'none',
-                                cursor: 'pointer',
-                                borderRadius: '5px',
-                            }}
-                        >
-                            Enregistrer
-                        </button>
+                        <div className="flex space-x-4">
+                            <button
+                                type="button"
+                                onClick={handleSave}
+                                className="px-4 py-2 bg-secondary text-white rounded hover:bg-yellow-500 transition"
+                            >
+                                Enregistrer
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setEditingReminder(null)}
+                                className="px-4 py-2 bg-gray-300 text-black rounded-md hover:bg-gray-400"
+                            >
+                                Annuler
+                            </button>
+                        </div>
                     </form>
                 </div>
             )}

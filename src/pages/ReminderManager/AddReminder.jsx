@@ -35,11 +35,11 @@ const AddReminder = () => {
     };
 
     return (
-        <div style={{ maxWidth: '500px', margin: 'auto', padding: '20px' }}>
-            <h2>Ajouter un rappel</h2>
+        <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg mt-6 border border-gray-200">
+            <h2 className="text-xl font-bold text-primary text-center mb-4">Ajouter un rappel</h2>
             <form onSubmit={handleAddReminder}>
-                <div style={{ marginBottom: '15px' }}>
-                    <label>Contenu</label>
+                <div className="mb-4">
+                    <label className="block text-gray-700 font-medium mb-2">Contenu</label>
                     <input
                         type="text"
                         name="content"
@@ -47,21 +47,24 @@ const AddReminder = () => {
                         onChange={handleInputChange}
                         required
                         placeholder="Entrez un contenu"
-                        style={{ width: '100%', padding: '8px' }}
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                 </div>
-                <div style={{ marginBottom: '15px' }}>
-                    <label>Date et heure</label>
+                <div className="mb-4">
+                    <label className="block text-gray-700 font-medium mb-2">Date et heure</label>
                     <input
                         type="datetime-local"
                         name="datetime"
                         value={form.datetime}
                         onChange={handleInputChange}
                         required
-                        style={{ width: '100%', padding: '8px' }}
+                        className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                 </div>
-                <button type="submit" style={{ padding: '10px 15px', backgroundColor: '#4CAF50', color: 'white', border: 'none', cursor: 'pointer' }}>
+                <button
+                    type="submit"
+                    className="w-full px-4 py-2 bg-primary text-white font-semibold rounded-md hover:bg-green-700 transition"
+                >
                     Ajouter le rappel
                 </button>
             </form>
